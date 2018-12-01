@@ -1,6 +1,6 @@
 /*
   tetromino.cpp - 
-  Created by Skye Perry, November 28, 2018.
+  Created by Skye Perry, November 30, 2018.
   Library for used in tetris.cpp to hold the teromino defenitions and rotate the state, calls the randomizer which
   adheres somewhat the Tetris guidline found here: http://tetris.wikia.com/wiki/Random_Generator
   Released into the public domain.
@@ -34,36 +34,43 @@ void Tetromino::set_tetromino(bool active){
       switch (piece_index) {
       case 1:
         // Serial.println("init_new_piece() - setting l_periscope as active piece");
+        active ? color_id = 1: color_id = color_id;
         tetromino_name = "l_periscope";
         copy_tetromino_def(l_periscope,active);
         break;
       case 2:
         // Serial.println("init_new_piece() - setting stick as active piece");
+         active ? color_id = 2: color_id = color_id;
         tetromino_name = "stick";
         copy_tetromino_def(stick,active);
         break;
       case 3:
         // Serial.println("init_new_piece() - setting square as active piece");
         tetromino_name = "square";
+         active ? color_id = 3: color_id = color_id;
         copy_tetromino_def(square,active);
         break;
       case 4:
         // Serial.println("init_new_piece() - setting square as active piece");
+         active ? color_id = 4: color_id = color_id;
         tetromino_name = "r_periscope";
         copy_tetromino_def(r_periscope,active);
         break;
       case 5:
         // Serial.println("init_new_piece() - setting square as active piece");
+         active ? color_id = 5: color_id = color_id;
         tetromino_name = "l_dog";
         copy_tetromino_def(l_dog,active);
         break;
       case 6:
        // Serial.println("init_new_piece() - setting square as active piece");
+        active ? color_id = 6: color_id = color_id;
         tetromino_name = "r_dog";
         copy_tetromino_def(r_dog,active);
         break;
       case 7:
         // Serial.println("init_new_piece() - setting square as active piece");
+         active ? color_id = 7: color_id = color_id;
         tetromino_name = "tee";
         copy_tetromino_def(tee,active);
         break;
@@ -88,10 +95,10 @@ void Tetromino::copy_tetromino_def(int arg_tetromino[4][4][2],bool active){
         }
       }
     }
+
   return;  
 }
-
-
+/*
 
 
 /* Tetromino::change_rotation_index(int change)

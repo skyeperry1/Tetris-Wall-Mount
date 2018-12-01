@@ -1,6 +1,6 @@
 /*
   tetromino.cpp - 
-  Created by Skye Perry, November 28, 2018.
+  Created by Skye Perry, November 30, 2018.
   Library for used in tetris.cpp to hold the tetromino (piece) definitions
   This adheres somewhat the Tetris guidline found here: http://tetris.wikia.com/wiki/Random_Generator
   Released into the public domain.
@@ -23,9 +23,10 @@ class Tetromino
   Tetromino();  
 
   int active_tetromino[4][2];  
-  int active_color[3];  
+  int color_id;
   String tetromino_name;
-
+  
+  
   int next_tetromino[4][2];
   int next_color[3];
 

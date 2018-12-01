@@ -30,18 +30,22 @@ void Tetris::testDisplay(){
                 led_index = 20 * x + y;  
               }
 
-              if(GameBoard[x][y]== 1){
-                leds[led_index ] = CRGB(127,20,10);              
-              } else if(GameBoard[x][y]== 2){
-                leds[led_index ] = CRGB(17,88,62);              
-              } else if(GameBoard[x][y]== 3){
-                leds[led_index ] = CRGB(27,20,100);              
-              } else if(GameBoard[x][y]== 4){
-                leds[led_index ] = CRGB(150,150,10);              
-              }else if(GameBoard[x][y]== 5){
-                leds[led_index ] = CRGB(50,155,6);              
+              if(gameboard.active_state[x][y]== 1){
+                leds[led_index ] = color_scheme.active_scheme[1];      
+              } else if(gameboard.active_state[x][y]== 2){
+                leds[led_index ] = color_scheme.active_scheme[2];               
+              } else if(gameboard.active_state[x][y]== 3){
+                leds[led_index ] = color_scheme.active_scheme[3];               
+              } else if(gameboard.active_state[x][y]== 4){
+                leds[led_index ] = color_scheme.active_scheme[4];               
+              }else if(gameboard.active_state[x][y]== 5){
+                leds[led_index ] = color_scheme.active_scheme[5];               
+              } else if(gameboard.active_state[x][y]== 6){
+                leds[led_index ] = color_scheme.active_scheme[6];               
+              } else if(gameboard.active_state[x][y]== 7){
+                leds[led_index ] = color_scheme.active_scheme[7];               
               } else {
-                leds[led_index ] = CRGB(0,0,0);              ;
+                leds[led_index ] = color_scheme.active_scheme[0];               ;
               }
               
             }
@@ -125,12 +129,8 @@ Tetris::Tetris()
   score.set_debug(true);
 
   
-  initialize_gameboard();
-  initialize_counters();
   create_new_piece();
-  tetromino.debug_print();
   
-  //serialPrintGameBoard();
   lastUpdate = millis();
  
 }
@@ -162,113 +162,25 @@ void Tetris::update_game_state(){
 
   if(currentTime - lastUpdate > score.get_game_speed()){
     move_piece_down();
-    serialPrintGameBoard();
+    //tetromino.debug_print();
+    //gameboard.debug_print_active_state();
     lastUpdate = currentTime;
   }  
-  tetromino.debug_print();
+  //tetromino.debug_print();
   testDisplay();
 }
 
 
 
-/* Public: serialPrintGameBoard()
- * Serial prints the gamboard state as integer values, formatted for arduino serial monitor
- * Prints the y axis of the array backwards so the xy coordiantes in the array are tranlated to the top right quadrent of a graph 
- */
- 
-void Tetris::serialPrintGameBoard(){
-    Serial.println();
-    Serial.println();
-    Serial.println("**Current Score:**");
-    Serial.println((String)score.get_score());
-    Serial.println();
-    Serial.println("**Current Gameboard State:**");
-    for(int y = HEIGHT -1; y >= 0; y--){
-      Serial.println();
-      for(int x = 0; x < WIDTH; x++){
-        Serial.print(GameBoard[x][y] );
-      }      
-    }
-    Serial.println();
-    Serial.println();
-    return;    
-}
 
 
 
-/* Private: intialize_gameboard()                          
- * Sets each element of the Gamboard array to 0, effectivly resetting the gameboard                            
- * using the global WIDTH and HEIGHT defined in tetris.h                        
- */
- 
-void Tetris::initialize_gameboard(){
-  for(int y = 0; y < HEIGHT; y++){
-    for(int x = 0; x < WIDTH; x++){      
-        GameBoard[x][y] = 0;
-      }      
-    }
-    //Serial.println("intialize_gameboard() - Initialized new gameboard, all pixels set to 0");
-    return;    
-}
 
 
 
-/* Private: initialize_counters()                      
- * Sets each element of the x_row_values adn y_column_values array to 0                           
- * using the global WIDTH and HEIGHT defined in tetris.h                        
- */
- 
-void Tetris::initialize_counters(){  
-  for(int y = 0; y < HEIGHT; y++){
-        x_row_values[y] = 0;
-    }
-    
-    for(int x = 0; x < WIDTH; x++){      
-            y_column_values[x] = 0;      
-    } 
-    //Serial.println("initialize_counters() - Initialized x_row_values and y_column_values, all elements set to 0");
-    return;    
-}
 
 
 
-/* Private: update_counters()                      
- * updates the counters based on the new piece coordinates gameboard                           
- *                      
- */
- 
-void Tetris::update_counters(){  
-    initialize_counters();
-    remove_piece_from_gameboard();
-    for(int x =0; x < WIDTH; x++){
-     for(int y = 0; y < HEIGHT; y++){
-       if(GameBoard[x][y] != 0){
-          //x_row_values[y] = x_row_values[y] + 1;
-          y_column_values[x] = y_column_values[x] + 1;
-        }        
-      }  
-    }
-    render_piece_to_gameboard();
-}
-
-
-
-/* Private: update_counters()                      
- * updates the counters based on the new piece coordinates gameboard                           
- *                      
- */
- 
-bool Tetris::check_for_loss(){  
-   for(int x = 0; x < WIDTH; x++){  
-           // Serial.println("** DEBUG: check_for_loss() - Column " + (String)x + " value: " + (String)GameBoard[x][24]);           
-            if(GameBoard[x][24] != 0){
-             // Serial.println("check_for_loss() - GAME OVER DETECTED");
-              return true;
-            }
-    } 
-    //Serial.println("check_for_loss() - no loss detected");
-    return false;    
-}
 
 
 
@@ -297,19 +209,14 @@ void Tetris::reset_player_location(){
  */
 
 void Tetris::rotate_piece(){
-  //Check if iteration is at max and reset to zero, otherwise increment by 1
-  //int prev_rotation = piece_rotation_index;
-  //piece_rotation_index >=  3 ? piece_rotation_index = 0 : piece_rotation_index = piece_rotation_index + 1; 
   tetromino.rotate(1);
-  remove_piece_from_gameboard();
+  gameboard.remove_tetromino(active_piece_tile_coordinates);
   set_active_piece_coordiantes();
- if(check_for_collision()){
+ if(gameboard.check_for_collision(active_piece_tile_coordinates)){
     tetromino.rotate(-1);
     set_active_piece_coordiantes();
-    render_piece_to_gameboard();
-    return;
   }
-  render_piece_to_gameboard();
+  gameboard.render_tetromino(active_piece_tile_coordinates,tetromino.color_id);
   return;
 }
 
@@ -339,38 +246,27 @@ void Tetris::move_player_location(int x, int y){
  */
  
 bool Tetris::move_piece_down(){  
-
-  //This serves as a temp placeholder to revert back to if need be      
-  int prev_active_piece_tile_coordinates[4][2];
   
-  remove_piece_from_gameboard();
-
-  //store active state temporarily for if we need to revert
-  for(int x = 0; x <4; x++){
-    prev_active_piece_tile_coordinates[x][0] = active_piece_tile_coordinates[x][0];
-    prev_active_piece_tile_coordinates[x][1] = active_piece_tile_coordinates[x][1];
-  }
+  gameboard.remove_tetromino(active_piece_tile_coordinates);
   
   move_player_location(0, -1);
   
-  if(check_for_collision()){
-    for(int x = 0; x <4; x++){
-      active_piece_tile_coordinates[x][0] = prev_active_piece_tile_coordinates[x][0];
-      active_piece_tile_coordinates[x][1] = prev_active_piece_tile_coordinates[x][1];
-    } 
-    render_piece_to_gameboard();
-    //set_active_piece_coordiantes();
+  if(gameboard.check_for_collision(active_piece_tile_coordinates)){
+    move_player_location(0, 1);
+    
+    gameboard.render_tetromino(active_piece_tile_coordinates,tetromino.color_id);
+
     process_complete_row();
-    update_counters();
     
     create_new_piece();
-    render_piece_to_gameboard();
+    //gameboard.render_tetromino(active_piece_tile_coordinates,tetromino.color_id);
     
     return true;
   } else {
   
-  render_piece_to_gameboard();  
-  process_complete_row();
+  gameboard.render_tetromino(active_piece_tile_coordinates,tetromino.color_id);
+  set_active_piece_coordiantes();
+  
   return false;
   }
 }
@@ -382,105 +278,76 @@ bool Tetris::move_piece_down(){
  */
  
 void Tetris::move_piece_left(){
- 
-
-    //This serves as a temp placeholder to revert back to if need be      
-  int prev_active_piece_tile_coordinates[4][2];
   
-  remove_piece_from_gameboard();
-
-  //store active state temporaroly for if we need to revert
-  for(int x = 0; x <4; x++){
-    prev_active_piece_tile_coordinates[x][0] = active_piece_tile_coordinates[x][0];
-    prev_active_piece_tile_coordinates[x][1] = active_piece_tile_coordinates[x][1];
-  }
+  gameboard.remove_tetromino(active_piece_tile_coordinates);
   
   move_player_location(-1, 0);
   
-  if(check_for_collision()){
-    for(int x = 0; x <4; x++){
-     
-      active_piece_tile_coordinates[x][0] = prev_active_piece_tile_coordinates[x][0];
-      active_piece_tile_coordinates[x][1] = prev_active_piece_tile_coordinates[x][1];
-    }   
+  if(gameboard.check_for_collision(active_piece_tile_coordinates)){
      move_player_location(1, 0);  
-  }
+  }  
   
-  render_piece_to_gameboard();
+  gameboard.render_tetromino(active_piece_tile_coordinates,tetromino.color_id);
 
   return;
 }
 
 
 
-/* Public: move_piece_down()
+/* Public:move_piece_right()
  * moves the falling piece left 1 tile
  */
  
 void Tetris::move_piece_right(){
  //This serves as a temp placeholder to revert back to if need be      
-  int prev_active_piece_tile_coordinates[4][2];
-  
-  remove_piece_from_gameboard();
 
-  //store active state temporaroly for if we need to revert
-  for(int x = 0; x <4; x++){
-    prev_active_piece_tile_coordinates[x][0] = active_piece_tile_coordinates[x][0];
-    prev_active_piece_tile_coordinates[x][1] = active_piece_tile_coordinates[x][1];
-  }
+  
+   gameboard.remove_tetromino(active_piece_tile_coordinates);
+
 
   //Move the player right
   move_player_location(1, 0);
 
-
   //Check for collision
-  if(check_for_collision()){
-    for(int x = 0; x <4; x++){
-     
-      active_piece_tile_coordinates[x][0] = prev_active_piece_tile_coordinates[x][0];
-      active_piece_tile_coordinates[x][1] = prev_active_piece_tile_coordinates[x][1];
-    }   
+  if(gameboard.check_for_collision(active_piece_tile_coordinates)){
     //Revert if collision is detected
      move_player_location(-1, 0);  
   }
   
-  render_piece_to_gameboard();
+   gameboard.render_tetromino(active_piece_tile_coordinates,tetromino.color_id);
 
   return;  
 }
 
 
 
-/* Public: move_piece_down()
+/* Public: move_piece_to_floor()
  * moves the falling piece to the bottom of the gameboard
  */
  
 void Tetris::move_piece_to_floor(){
   
-   remove_piece_from_gameboard();
+    gameboard.remove_tetromino(active_piece_tile_coordinates);
 
-   int last_x;
    int closest_move = 28;
    for(int x = 0; x < 4; x++){
-      if(active_piece_tile_coordinates[x][1] - y_column_values[active_piece_tile_coordinates[x][0]] < closest_move){
+      //Serial.println("get drop height: " + (String)gameboard.get_drop_height(active_piece_tile_coordinates[x][0] ,active_piece_tile_coordinates[x][1]));
+      if(gameboard.get_drop_height(active_piece_tile_coordinates[x][0] ,active_piece_tile_coordinates[x][1]) < closest_move){
         
-        closest_move = active_piece_tile_coordinates[x][1] - y_column_values[active_piece_tile_coordinates[x][0]];
+        closest_move = gameboard.get_drop_height(active_piece_tile_coordinates[x][0] ,active_piece_tile_coordinates[x][1]);
         //Serial.println("closest_move:" + (String)closest_move);
       }
     } 
 
-    move_player_location(0, -(closest_move));  
-    set_active_piece_coordiantes();
     
-    render_piece_to_gameboard();
-    process_complete_row();
-    update_counters();
+    //Serial.println("closest_move Move: " + (String)closest_move);
+    move_player_location(0, -(closest_move));   
+    gameboard.render_tetromino(active_piece_tile_coordinates,tetromino.color_id);
     testDisplay();
-
+    process_complete_row();
     
-    
+        
     create_new_piece();
-    render_piece_to_gameboard();
     
     return;
 
@@ -511,33 +378,13 @@ void Tetris::set_active_piece_coordiantes(){
  */
  
 void Tetris::create_new_piece(){
-  tetromino.init_new_tetromino();
+  if(gameboard.check_for_top_out()){ Serial.println("**GAME OVER**");delay(10000);return;}
   reset_player_location();
-
+  tetromino.init_new_tetromino();  
   set_active_piece_coordiantes();
-
-  if(check_for_loss()){ Serial.println("**GAME OVER**");delay(10000);return;}
-  return;
-}
-
-
-
-/* Private: render_piece_in_gameboard()
- * erases the previous piece state from the gameboard and adds renders the updated position 
- * 
- * 
- */
-
-
-void Tetris::render_piece_to_gameboard(){  
+  gameboard.render_tetromino(active_piece_tile_coordinates,tetromino.color_id);
   
-  int piece_tile_location_x, piece_tile_location_y;
-  for(int x = 0;x < 4; x++ ){     
-     piece_tile_location_x = active_piece_tile_coordinates[x][0]; // Get the x piece tile coordinates
-     piece_tile_location_y = active_piece_tile_coordinates[x][1]; // Get the y piece tile coordinates
-     GameBoard[piece_tile_location_x][piece_tile_location_y] = 2;//tetromino.active_color[0];
-     //Serial.println("DEBUG: render_piece_to_gameboard() - placing active piece tile in gameboard at (" + (String)piece_tile_location_x + "," + (String)piece_tile_location_y + ")");
-  }
+
   
   return;
 }
@@ -548,34 +395,23 @@ void Tetris::process_complete_row(){
 
   int offset = 0;
   int piece_tile_location_y;
-  
-  int row_animated[3];
-    for(int x = 0;x < 4; x++ ){         
-     piece_tile_location_y = active_piece_tile_coordinates[x][1]; // Get the y piece tile coordinates     
-       /*if(check_for_complete_row(piece_tile_location_y) && piece_tile_location_y != row_animated[0] && piece_tile_location_y != row_animated[1] && piece_tile_location_y != row_animated[2]){
-          animate_erase_row(piece_tile_location_y);
-          row_animated[x] = piece_tile_location_y;
 
-       }*/
-       if(check_for_complete_row(piece_tile_location_y)){
-          animate_erase_row(piece_tile_location_y);
+    for(int x = 0;x < 4; x++ ){       
+       piece_tile_location_y = active_piece_tile_coordinates[x][1]; // Get the y piece tile coordinates       
+       if(gameboard.check_for_complete_row(piece_tile_location_y)){      
+            animate_erase_row(piece_tile_location_y);
        }
     }
   
-  for(int x = 0;x < 4; x++ ){    
+
+  
+  for(int x = 0;x < 4; x++ ){  
      
      piece_tile_location_y = active_piece_tile_coordinates[x][1] - offset; // Get the y piece tile coordinates
      
-     if(check_for_complete_row(piece_tile_location_y)){      
-       //remove row and shift down
-       if(check_for_complete_row(piece_tile_location_y) && piece_tile_location_y != row_animated[0] && piece_tile_location_y != row_animated[1] && piece_tile_location_y != row_animated[2]){
-          animate_erase_row(piece_tile_location_y);
-          remove_row_from_gameboard(piece_tile_location_y);
-          row_animated[x] = piece_tile_location_y;
-
-       }
-     
-       offset = offset  + 1;
+     if(gameboard.check_for_complete_row(piece_tile_location_y)){ 
+          gameboard.remove_row_from_gameboard(piece_tile_location_y);
+          offset = offset  + 1;
      }
   }
 
@@ -583,88 +419,9 @@ void Tetris::process_complete_row(){
     score.update_score(offset);
   }
 
-  update_counters();
   return;
 }
 
-
-
-
-bool Tetris::check_for_complete_row(int row_y){  
-     for(int x = 0; x < WIDTH; x++){
-       if(GameBoard[x][row_y] == 0){
-        return false;
-       }
-     }
-     //Serial.println("DEBUG: Complete row found: " + (String)row_y);
-     return true;
-}
-
-
-void Tetris::remove_row_from_gameboard(int row_y){  
-  int tmp_gameBoard[10];
-  bool empty_row;
-  for(int y = row_y; y < 20; y++ ){    
-     empty_row = true;
-     for(int x = 0; x < WIDTH; x++){
-      if(y == 19){
-        GameBoard[x][y] = 0;
-       } else {
-        GameBoard[x][y] = GameBoard[x][y + 1];
-       }
-     }
-  }
-  
-}
-
-
-
-
-
-/* Private: remove_piece_from_gameboard()
- * removes the previous piece from the gamboard
- * 
- * 
- */
-void Tetris::remove_piece_from_gameboard(){
-  int piece_tile_location_x, piece_tile_location_y;
-  for(int x = 0;x < 4; x++ ){     
-     piece_tile_location_x = active_piece_tile_coordinates[x][0]; // Get the x piece tile coordinates 
-     piece_tile_location_y = active_piece_tile_coordinates[x][1]; // Get the y piece tile coordinates
-     GameBoard[piece_tile_location_x][piece_tile_location_y] = 0;
-     //Serial.println("DEBUG: erase_prev_piece_from_gameboard() - placing active piece tile in gameboard at (" + (String)piece_tile_location_x + "," + (String)piece_tile_location_y + ")");
-  }
-  return;
-}
-
-
-
-/* Private: check_for_collision() -
- *  Checks if the current state of the gameboard has collisions
- *  
- * 
- */
- 
-bool Tetris::check_for_collision(){  
-  int piece_tile_location_x, piece_tile_location_y = 0;  
-  for(int x = 0;x < 4; x++ ){     
-     piece_tile_location_x = active_piece_tile_coordinates[x][0];// + movement_x; // Get the x piece tile coordinates 
-     piece_tile_location_y = active_piece_tile_coordinates[x][1];//+ movement_y; // Get the y piece tile coordinates
-     
-    if(piece_tile_location_x < 0 || piece_tile_location_x >= WIDTH){      
-        //Serial.println("DEBUG: check_for_collision() -  Out of bounds collision detected on x axis at (" + (String)piece_tile_location_x + "," + (String)piece_tile_location_y + ")**");
-        return true;
-    } else if(piece_tile_location_y < 0 || piece_tile_location_y >= HEIGHT){
-        //Serial.println("DEBUG: check_for_collision() -  Out of bounds collision detected on y axis at (" + (String)piece_tile_location_x + "," + (String)piece_tile_location_y + ")**");
-        return true;     
-    } else if (GameBoard[piece_tile_location_x][piece_tile_location_y] != 0){
-        //Serial.println("DEBUG: check_for_collision() -  Gamboard piece collision detected at (" + (String)piece_tile_location_x + "," + (String)piece_tile_location_y + ")**");
-        return true;
-    }
-  }
-  //no colission detected
-  return false;
-}
 
 
 
