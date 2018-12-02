@@ -14,10 +14,7 @@
 
 #include "gameboard.h"
 
-#include "color.h"
-
 #include "Arduino.h"
-
 
 
 class Tetris
@@ -26,7 +23,6 @@ class Tetris
     Tetris();  //Constructor
     Tetromino tetromino;
     Gameboard gameboard;
-    ColorScheme color_scheme;
 
     void update_game_state(); //Runs the game
 
@@ -36,10 +32,7 @@ class Tetris
     void move_piece_to_floor();
     void rotate_piece();
 
-    void testDisplay();
     void init_hardware();
-
-
     
    private:    
     //Variables
@@ -58,8 +51,7 @@ class Tetris
     void move_player_location(int , int );  
     
     void set_active_piece_coordiantes();
-
-    
+        
 };
 
 #endif

@@ -9,118 +9,12 @@
 Score score(true);
 Randomizer randomizer;
 
-/* Tetris LED Display
- * 
- */
-#include <FastLED.h>
-#define NUM_LEDS 200
-#define FASTLED_DATA_PIN 2
-// Define the array of leds
-CRGB leds[NUM_LEDS];
 
-void Tetris::testDisplay(){
-  int led_index = 0;
- //for(int y = 20 - 1; y >= 0; y--){
- for(int y = 0 ; y < 20; y++){
-            for(int x = 0; x < 10; x++){
 
-              if(x % 2 == 0 ){
-                led_index = 20 * x + (19 -y);
-              } else {  
-                led_index = 20 * x + y;  
-              }
-
-              if(gameboard.active_state[x][y]== 1){
-                leds[led_index ] = color_scheme.active_scheme[1];      
-              } else if(gameboard.active_state[x][y]== 2){
-                leds[led_index ] = color_scheme.active_scheme[2];               
-              } else if(gameboard.active_state[x][y]== 3){
-                leds[led_index ] = color_scheme.active_scheme[3];               
-              } else if(gameboard.active_state[x][y]== 4){
-                leds[led_index ] = color_scheme.active_scheme[4];               
-              }else if(gameboard.active_state[x][y]== 5){
-                leds[led_index ] = color_scheme.active_scheme[5];               
-              } else if(gameboard.active_state[x][y]== 6){
-                leds[led_index ] = color_scheme.active_scheme[6];               
-              } else if(gameboard.active_state[x][y]== 7){
-                leds[led_index ] = color_scheme.active_scheme[7];               
-              } else {
-                leds[led_index ] = color_scheme.active_scheme[0];               ;
-              }
-              
-            }
-   }
-   FastLED.show();
+//Should be called in setup step of program
+void Tetris::init_hardware(){
+  gameboard.initialize();
 }
-
-
-int get_led_index(int x, int y){
- if(x % 2 == 0 ){
-    return 20 * x + (19 -y);
-  } else {  
-    return 20 * x + y;  
-  }  
-}
-
-void animate_erase_row(int row){
-      int high = 100;
-      int med = 50;
-      int delay_val = 10;
-  
-      leds[get_led_index(4,row)] = CRGB(high,high,high);
-      leds[get_led_index(5,row)] = CRGB(high,high,high);
-      FastLED.show();
-      delay(delay_val); 
-
-      leds[get_led_index(4,row)] = CRGB(med,med,med);
-      leds[get_led_index(5,row)] = CRGB(med,med,med);
-      leds[get_led_index(3,row)] = CRGB(high,high,high);
-      leds[get_led_index(6,row)] = CRGB(high,high,high);
-      FastLED.show();
-      delay(delay_val); 
-
-      leds[get_led_index(4,row)] = CRGB(1,1,1);
-      leds[get_led_index(5,row)] = CRGB(1,1,1);
-      leds[get_led_index(3,row)] = CRGB(med,med,med);
-      leds[get_led_index(6,row)] = CRGB(med,med,med);
-      leds[get_led_index(2,row)] = CRGB(high,high,high);
-      leds[get_led_index(7,row)] = CRGB(high,high,high);
-      FastLED.show();
-      delay(delay_val); 
-
-      leds[get_led_index(3,row)] = CRGB(1,1,1);
-      leds[get_led_index(6,row)] = CRGB(1,1,1);
-      leds[get_led_index(2,row)] = CRGB(med,med,med);
-      leds[get_led_index(7,row)] = CRGB(med,med,med);
-      leds[get_led_index(1,row)] = CRGB(high,high,high);
-      leds[get_led_index(8,row)] = CRGB(high,high,high);
-      FastLED.show();
-      delay(delay_val); 
-
-      leds[get_led_index(2,row)] = CRGB(1,1,1);
-      leds[get_led_index(7,row)] = CRGB(1,1,1);
-      leds[get_led_index(1,row)] = CRGB(med,med,med);
-      leds[get_led_index(8,row)] = CRGB(med,med,med);
-      leds[get_led_index(0,row)] = CRGB(high,high,high);
-      leds[get_led_index(9,row)] = CRGB(high,high,high);
-      FastLED.show();
-      delay(delay_val);
-
-      leds[get_led_index(1,row)] = CRGB(1,1,1);
-      leds[get_led_index(8,row)] = CRGB(1,1,1);
-      leds[get_led_index(0,row)] = CRGB(med,med,med);
-      leds[get_led_index(9,row)] = CRGB(med,med,med);
-      FastLED.show();
-      delay(delay_val);
-
-      leds[get_led_index(0,row)] = CRGB(1,1,1);
-      leds[get_led_index(9,row)] = CRGB(1,1,1);
-
-      FastLED.show();
-  
-}
-
-
 
 
 
@@ -129,34 +23,11 @@ Tetris::Tetris()
   Serial.begin(115200);
   Serial.println("Starting Tetris...");
   score.set_debug(true);
-
   
   create_new_piece();
   
   lastUpdate = millis();
  
-}
-
-
-
-
-
-
-void Tetris::init_hardware(){
-  FastLED.addLeds<NEOPIXEL, FASTLED_DATA_PIN>(leds, NUM_LEDS);
-  for(int x = 0; x < 200 ; x++){
-              
-                  leds[x ] = CRGB(random(0,50),random(0,50),random(0,50));//CRGB(100,27,20);
-                  FastLED.show();
-                  delay(1);
-       }
-         for(int x = 0; x < 200 ; x++){
-              
-                  leds[x ] = CRGB(0,0,0);//CRGB(100,27,20);
-                  FastLED.show();
-                  delay(1);
-       }
-  
 }
 
 
@@ -175,8 +46,7 @@ void Tetris::update_game_state(){
     //gameboard.debug_print_active_state();
     lastUpdate = currentTime;
   }  
-  //tetromino.debug_print();
-  testDisplay();
+  gameboard.render_display();
 }
 
 
@@ -339,7 +209,7 @@ void Tetris::move_piece_to_floor(){
     //Serial.println("closest_move Move: " + (String)closest_move);
     move_player_location(0, -(closest_move));   
     gameboard.render_tetromino(active_piece_tile_coordinates,tetromino.color_id);
-    testDisplay();
+    gameboard.render_display();
     int completed_rows = gameboard.process_complete_row(active_piece_tile_coordinates);
     score.update_score(completed_rows);
     

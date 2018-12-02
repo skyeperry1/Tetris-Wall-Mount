@@ -9,7 +9,7 @@
 #define gameboard_h
 
 #include "Arduino.h"
-
+#include "display.h"
 
 #define WIDTH 10 //Game board width
 #define HEIGHT 28 //Game board height
@@ -20,7 +20,10 @@ class Gameboard
   public:
   
   Gameboard();
-
+  Display led_display;
+  void render_display();
+  void initialize();
+  
   int active_state[WIDTH][HEIGHT];
 
   bool check_for_top_out();  

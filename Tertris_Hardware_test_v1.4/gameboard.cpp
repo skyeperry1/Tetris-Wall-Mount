@@ -18,7 +18,13 @@ Gameboard::Gameboard(){
   reset_state();  
 }
   
+void Gameboard::initialize(){
+  led_display.initialize(); 
+}
 
+void Gameboard::render_display(){
+  led_display.render(active_state); 
+}
 
 /*  get_drop_height(int column_x, int start_height_y){
  *  Returns the drop height of a given column from an argument height
@@ -51,7 +57,7 @@ int Gameboard::process_complete_row(int arg_coordinates[4][2]){
     for(int x = 0;x < 4; x++ ){       
        piece_tile_location_y = arg_coordinates[x][1]; // Get the y piece tile coordinates       
        if(check_for_complete_row(piece_tile_location_y)){      
-            //animate_erase_row(piece_tile_location_y);
+            led_display.animate_erase_row(piece_tile_location_y);
        }
     }
   
