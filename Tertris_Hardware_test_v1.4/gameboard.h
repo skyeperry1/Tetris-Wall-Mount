@@ -15,8 +15,6 @@
 #define HEIGHT 28 //Game board height
 
 
-
-
 class Gameboard
 {
   public:
@@ -25,14 +23,11 @@ class Gameboard
 
   int active_state[WIDTH][HEIGHT];
 
-  bool check_for_top_out();
-  bool check_for_complete_row(int);
+  bool check_for_top_out();  
   bool check_for_collision(int[4][2]);
 
   void render_tetromino(int[4][2],int);
-  void remove_tetromino(int[4][2]);  
-
-  void remove_row_from_gameboard(int);
+  void remove_tetromino(int[4][2]);    
 
   int process_complete_row(int[4][2]);
 
@@ -42,12 +37,12 @@ class Gameboard
   void debug_print_active_state();
   
   private:
+  
+  bool check_for_complete_row(int);
+  
+  void remove_row_from_gameboard(int);
     
   void reset_state();
-
-
-  
-
   
   
 };

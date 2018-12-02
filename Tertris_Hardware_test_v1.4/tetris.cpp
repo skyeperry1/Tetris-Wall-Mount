@@ -335,7 +335,6 @@ void Tetris::move_piece_to_floor(){
         //Serial.println("closest_move:" + (String)closest_move);
       }
     } 
-
     
     //Serial.println("closest_move Move: " + (String)closest_move);
     move_player_location(0, -(closest_move));   
@@ -383,10 +382,3 @@ void Tetris::create_new_piece(){
   
   return;
 }
-
-
-
-
-
-
-

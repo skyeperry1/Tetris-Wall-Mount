@@ -33,7 +33,6 @@ class Score
   void reset_score();
 
   
-  
   int level;
   int rows_to_level_up_fixed;
   void reset_level();

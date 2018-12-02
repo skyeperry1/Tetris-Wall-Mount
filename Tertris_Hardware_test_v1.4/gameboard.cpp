@@ -67,13 +67,7 @@ int Gameboard::process_complete_row(int arg_coordinates[4][2]){
      }
   }
 
-  /*
-  if(offset >= 1){
-    score.update_score(offset);
-  }
-  */
-
-  return offset;
+  return offset; // returns the number of processed rows
 }
 
 

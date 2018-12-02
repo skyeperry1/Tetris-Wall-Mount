@@ -98,7 +98,7 @@ void Tetromino::copy_tetromino_def(int arg_tetromino[4][4][2],bool active){
 
   return;  
 }
-/*
+
 
 
 /* Tetromino::change_rotation_index(int change)
