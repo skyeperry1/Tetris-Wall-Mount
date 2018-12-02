@@ -41,34 +41,23 @@ class Tetris
 
 
     
-   private:
-    
+   private:    
     //Variables
     int lastUpdate;    
     int game_state;
     
     int player_location_x;
     int player_location_y; 
-
-    
-    int active_piece_tile_coordinates[4][2];
-
-    
+        
+    int active_piece_tile_coordinates[4][2];    
     
     //Functions
-
-
     void create_new_piece();
       void reset_player_location();
-
-    void move_player_location(int , int );    
-
+      
+    void move_player_location(int , int );  
+    
     void set_active_piece_coordiantes();
-
-    void process_complete_row();
-
-  
-
 
     
 };

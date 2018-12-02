@@ -34,19 +34,15 @@ class Gameboard
 
   void remove_row_from_gameboard(int);
 
+  int process_complete_row(int[4][2]);
+
   int get_drop_height(int, int);
 
   void debug_print();
   void debug_print_active_state();
   
   private:
-
-  int x_column_values[WIDTH];
-  int y_row_values[HEIGHT];
-
     
-  void update_counters();
-
   void reset_state();
 
 

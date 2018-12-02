@@ -15,19 +15,16 @@
  * 
  */
 Gameboard::Gameboard(){
-  reset_state();
-
-  
+  reset_state();  
 }
+  
 
 
-
-  int x_column_values[WIDTH];
-
-
-    
-
-
+/*  get_drop_height(int column_x, int start_height_y){
+ *  Returns the drop height of a given column from an argument height
+ *  
+ * 
+ */
 int Gameboard::get_drop_height(int column_x, int start_height_y){
   for(int y = start_height_y; y >= 0; y--){
     if(active_state[column_x][y] != 0){
@@ -37,6 +34,51 @@ int Gameboard::get_drop_height(int column_x, int start_height_y){
   }
    return start_height_y;
 }
+
+
+
+
+
+/* process_complete_row(int[4][2])
+ * 
+ * 
+ */
+int Gameboard::process_complete_row(int arg_coordinates[4][2]){  
+
+  int offset = 0;
+  int piece_tile_location_y;
+
+    for(int x = 0;x < 4; x++ ){       
+       piece_tile_location_y = arg_coordinates[x][1]; // Get the y piece tile coordinates       
+       if(check_for_complete_row(piece_tile_location_y)){      
+            //animate_erase_row(piece_tile_location_y);
+       }
+    }
+  
+
+  
+  for(int x = 0;x < 4; x++ ){  
+     
+     piece_tile_location_y = arg_coordinates[x][1] - offset; // Get the y piece tile coordinates
+     
+     if(check_for_complete_row(piece_tile_location_y)){ 
+          remove_row_from_gameboard(piece_tile_location_y);
+          offset = offset  + 1;
+     }
+  }
+
+  /*
+  if(offset >= 1){
+    score.update_score(offset);
+  }
+  */
+
+  return offset;
+}
+
+
+
+
 
 
 /*  check_for_complete_row(int row_y) -
@@ -57,25 +99,10 @@ bool Gameboard::check_for_complete_row(int row_y){
 
 
 
-/*
-void Gameboard::remove_row_from_gameboard(int row_y){  
-  bool empty_row = false;
-  for(int y = row_y; y < HEIGHT -1 && !empty_row; y++ ){
-     empty_row = true;    
-     for(int x = 0; x < WIDTH; x++){
-      if(y == 19){
-        active_state[x][y] = 0;
-        empty_row = false;
-       } else {
-        active_state[x][y] = active_state[x][y + 1];
-       }
-       if( active_state[x][y] != 0){empty_row = false;}
-     }
-  }
-  
-}
-*/
-
+/* remove_row_from_gameboard(int row_y){  
+ * removes an arg row from the gameboard and shifts all rows above down.
+ * Active piece should be removed from gameboard before runnning this
+ */
 void Gameboard::remove_row_from_gameboard(int row_y){  
  
   bool empty_row = false;

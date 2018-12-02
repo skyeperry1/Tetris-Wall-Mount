@@ -70,7 +70,7 @@ void Tetromino::set_tetromino(bool active){
         break;
       case 7:
         // Serial.println("init_new_piece() - setting square as active piece");
-         active ? color_id = 7: color_id = color_id;
+        active ? color_id = 7: color_id = color_id;
         tetromino_name = "tee";
         copy_tetromino_def(tee,active);
         break;
