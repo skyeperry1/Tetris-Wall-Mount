@@ -12,6 +12,7 @@
 ColorScheme::ColorScheme(){
   for(int i = 0; i < 8; i++){
     active_scheme[i] = classic[i];
+    
     //active_scheme[i] = warm_xmas[i];
   }
 }
