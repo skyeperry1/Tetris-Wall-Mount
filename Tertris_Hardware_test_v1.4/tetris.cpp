@@ -13,7 +13,11 @@ Randomizer randomizer;
 
 //Should be called in setup step of program
 void Tetris::init_hardware(){
+  audio.initialize();
   gameboard.initialize();
+  scoreboard.initialize();  
+
+  audio.start_music(); // need to mode this
 }
 
 
@@ -45,8 +49,10 @@ void Tetris::update_game_state(){
     //tetromino.debug_print();
     //gameboard.debug_print_active_state();
     lastUpdate = currentTime;
+    audio.update_state();
   }  
   gameboard.render_display();
+  scoreboard.update_state();
 }
 
 
@@ -123,7 +129,7 @@ bool Tetris::move_piece_down(){
 
     int completed_rows = gameboard.process_complete_row(active_piece_tile_coordinates);
     score.update_score(completed_rows);
-    
+    scoreboard.print_score(score.get_score(),score.get_level());
     create_new_piece();
     //gameboard.render_tetromino(active_piece_tile_coordinates,tetromino.color_id);
     
@@ -193,7 +199,7 @@ void Tetris::move_piece_right(){
  */
  
 void Tetris::move_piece_to_floor(){
-  
+    if(player_location_y > 19){return;} // make sure tile is in board
     gameboard.remove_tetromino(active_piece_tile_coordinates);
 
    int closest_move = 28;
@@ -212,7 +218,7 @@ void Tetris::move_piece_to_floor(){
     gameboard.render_display();
     int completed_rows = gameboard.process_complete_row(active_piece_tile_coordinates);
     score.update_score(completed_rows);
-    
+    scoreboard.print_score(score.get_score(),score.get_level());
     create_new_piece();
     
     return;  

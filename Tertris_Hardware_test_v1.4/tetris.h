@@ -11,9 +11,9 @@
 #include "score.h"
 
 #include "tetromino.h"
-
+#include "tetrisaudio.h"
 #include "gameboard.h"
-
+#include "scoreboard.h"
 #include "Arduino.h"
 
 
@@ -23,7 +23,8 @@ class Tetris
     Tetris();  //Constructor
     Tetromino tetromino;
     Gameboard gameboard;
-
+    Scoreboard scoreboard;
+    Audio audio;
     void update_game_state(); //Runs the game
 
     bool move_piece_down();

@@ -1,19 +1,5 @@
 
 
-
-/*  Audio player
- * 
- * 
- */
-#include "DFRobotDFPlayerMini.h"
-
-HardwareSerial mySoftwareSerial(1); //Setup Tx0 and Rx0
-DFRobotDFPlayerMini myDFPlayer;
-void printDetail(uint8_t type, int value);
-
-
-
-
 /*  Coin acceptor Interrupt
  * 
  * 
@@ -34,91 +20,6 @@ static void IRAM_ATTR coinInserted()
 //Serial.print("interrupt Fired");
 
 }
-
-
-
-
-/*  Scorboard Display
- * 
- * 
- */
-#include <MD_Parola.h>
-#include <MD_MAX72xx.h>
-#include <SPI.h>
-
-// Define the number of devices we have in the chain and the hardware interface
-// NOTE: These pin numbers will probably not work with your hardware and may
-// need to be adapted
-#define HARDWARE_TYPE MD_MAX72XX::FC16_HW
-#define MAX_DEVICES 4
-#define CLK_PIN  18 // or SCK
-#define DATA_PIN  23  // or MOSI
-#define CS_PIN    5  // or SS
-
-// Hardware SPI connection
-MD_Parola P = MD_Parola(HARDWARE_TYPE, CS_PIN, MAX_DEVICES);
-
-uint8_t frameDelay = 25;  // default frame delay value
-#define SPEED_TIME  25
-#define PAUSE_TIME  2000
-
-#define BUF_SIZE 300 
-char pd_message2[BUF_SIZE] = { "" };
-
-// Global scorboard variables
-uint8_t  curText;
-char  *pc[] =
-{
-  "Insert",
-  "Coin",
-};
-
-uint8_t  inFX, outFX;
-textEffect_t  effect[] =
-{
-  PA_PRINT,
-  PA_SCAN_HORIZ,
-  PA_SCROLL_LEFT,
-  PA_WIPE,
-  PA_SCROLL_UP_LEFT,
-  PA_SCROLL_UP,
-  PA_OPENING_CURSOR,
-  PA_GROW_UP,
-  PA_MESH,
-  PA_SCROLL_UP_RIGHT,
-  PA_BLINDS,
-  PA_CLOSING,
-  PA_RANDOM,
-  PA_GROW_DOWN,
-  PA_SCAN_VERT,
-  PA_SCROLL_DOWN_LEFT,
-  PA_WIPE_CURSOR,
-  PA_DISSOLVE,
-  PA_OPENING,
-  PA_CLOSING_CURSOR,
-  PA_SCROLL_DOWN_RIGHT,
-  PA_SCROLL_RIGHT,
-  PA_SLICE,
-  PA_SCROLL_DOWN,
-};
-
-//Helper for converting coin value to string values for scoreboard
-String doubleToString(double input,int decimalPlaces){
-  if(decimalPlaces!=0){
-    String string = String((int)(input*pow(10,decimalPlaces)));
-    if(abs(input)<1){
-    if(input>0)
-    string = "0"+string;
-    else if(input<0)
-    string = string.substring(0,1)+"0"+string.substring(1);
-    }
-    return string.substring(0,string.length()-decimalPlaces)+"."+string.substring(string.length()-decimalPlaces);
-    }
-    else {
-    return String((int)input);
-  }
-}
-
 
 
 
@@ -171,49 +72,12 @@ bool state_Down,
 void setup() {
 
     tetris.init_hardware();
-/*  Scoreboard Setup
- * 
- */
-
-  P.begin();
-  P.setInvert(false);
-  //P.displayText(pc[curText], PA_CENTER, SPEED_TIME, PAUSE_TIME, effect[inFX], effect[outFX]);
-  P.displayText("boot...", PA_LEFT, SPEED_TIME, PAUSE_TIME, PA_PRINT);
-  P.displayAnimate();
-  delay(2000);
 
 /*  Controller Setup
  * 
  */
 initController();
   
-/*  Audio Setup
- * 
- */
-  mySoftwareSerial.begin(9600, SERIAL_8N1, 1, 3);  // speed, type, RX0, TX0
-  if (!myDFPlayer.begin(mySoftwareSerial, false)) {  //Use softwareSerial to communicate with mp3.    
-    Serial.println(myDFPlayer.readType(),HEX);
-    P.displayText("!audio", PA_LEFT, SPEED_TIME, PAUSE_TIME, PA_PRINT);
-    P.displayAnimate();
-    delay(1000);
-    Serial.println(F("Unable to begin:"));
-    Serial.println(F("1.Please recheck the connection!"));
-    Serial.println(F("2.Please insert the SD card!"));
-    while(true);
-  }
-
-  Serial.println(F("Audio is online."));
-  P.displayText("+audio", PA_LEFT, SPEED_TIME, PAUSE_TIME, PA_PRINT);
-  P.displayAnimate();
-  delay(1000);
-
-  
-  myDFPlayer.setTimeOut(500); //Set serial communictaion time out 500ms  
-  myDFPlayer.volume(15);  //Set volume value (0~30).
-  myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD); // Set SD read
-  myDFPlayer.EQ(DFPLAYER_EQ_BASS); //Set EQ
-  myDFPlayer.play(4);  //Play the initializing mp3
-
 
 
  
@@ -223,55 +87,14 @@ initController();
   pinMode(digitalPinToInterrupt(GPIO_Pin), INPUT_PULLDOWN); 
   
   attachInterrupt(GPIO_Pin, &coinInserted, true);
-  P.displayText("+coin", PA_LEFT, SPEED_TIME, PAUSE_TIME, PA_PRINT);
-  P.displayAnimate();
+  //P.displayText("+coin", PA_LEFT, SPEED_TIME, PAUSE_TIME, PA_PRINT);
+  //P.displayAnimate();
   delay(1000);
 
 
-
-
-/*  Controller Setup
- * 
- */
   Serial.begin(115200);
 
-
-
-
-
-/*  Tetris LED display setup
- * 
- */
- /* FastLED.addLeds<NEOPIXEL, FASTLED_DATA_PIN>(leds, NUM_LEDS);
-  P.displayText("+led", PA_LEFT, SPEED_TIME, PAUSE_TIME, PA_PRINT);
-  P.displayAnimate();  
-  for(int x = 0; x < 200 ; x++){
-              
-                  leds[x ] = CRGB(random(0,50),random(0,50),random(0,50));//CRGB(100,27,20);
-                  FastLED.show();
-                  delay(10);
-       }
-         for(int x = 0; x < 200 ; x++){
-              
-                  leds[x ] = CRGB(0,0,0);//CRGB(100,27,20);
-                  FastLED.show();
-                  delay(10);
-       }
-*/
-
-
-/*  End boot sequence 
- * 
- * 
- */
-  P.displayText("init", PA_LEFT, SPEED_TIME, PAUSE_TIME, PA_PRINT);
-  P.displayAnimate(); 
-  delay(1000);
-  P.displayText("okay", PA_LEFT, SPEED_TIME, PAUSE_TIME, PA_PRINT);
-  P.displayAnimate(); 
-  delay(1000);
-     
-  P.displayText(pc[curText], PA_CENTER, SPEED_TIME, PAUSE_TIME, effect[inFX], effect[outFX]);
+  //P.displayText(pc[curText], PA_CENTER, SPEED_TIME, PAUSE_TIME, effect[inFX], effect[outFX]);
   
 }
 
@@ -281,13 +104,7 @@ initController();
  *  LOOP()
  ********************************************************************************************/
 void loop() {
-  
-
-  
-
-  
-
-  
+    
   /* Handle coin change
    * 
    */
@@ -295,91 +112,20 @@ void loop() {
     //Check if a coin has been Inserted
       {
         coinsChange = 0;//unflag that a coin has been inserted     
-        myDFPlayer.play(5);//Play coin inseted sound          
-    
-        String message1 = "Credit";       
-   
-         //Set and copy first string 
-         char str[] = "Credit:";
-         pc[0] = (char *)malloc(strlen(str)+1);
-         strcpy(pc[0],str);
 
-         //Copy second String         
-         char str2[BUF_SIZE] = {""};
-         String message2 = "$" + doubleToString(coinsValue, 2);
-         message2.toCharArray(str2, BUF_SIZE);         
-         pc[1] = (char *)malloc(strlen(str2)+1);
-         strcpy(pc[1],str2);
-
-         Serial.print(message1);
-         Serial.println(message2);
-        
-         // Set the display for the first string.
-          curText = 0;//(++curText) % ARRAY_SIZE(pc);
-          P.setTextBuffer(pc[curText]);
       
           // When we have gone back to the first string, set a new exit effect
           // and when we have done all those set a new entry effect.
-          if (curText == 0)
-          {
-            outFX = (++outFX) % ARRAY_SIZE(effect);
-            if (outFX == 0)
-            {
-              inFX = (++inFX) % ARRAY_SIZE(effect);
-              if (inFX == 0)
-                P.setInvert(!P.getInvert());
-            }
-            P.setSpeed(25);
-            P.setPause(900);
-            frameDelay = 30;
-            P.setTextEffect(PA_SCROLL_UP, PA_SCROLL_UP);
-          }
-      
-          // Tell Parola we have a new animation
-          P.displayReset();
-    }
+       }
     //End coin drop
 
 
-//Scoreboard Updates
-
-
-  if (P.displayAnimate()) // animates and returns true when an animation is completed
-  {
-    // Set the display for the next string.
-    curText = (++curText) % ARRAY_SIZE(pc);
-    P.setTextBuffer(pc[curText]);
-
-    // When we have gone back to the first string, set a new exit effect
-    // and when we have done all those set a new entry effect.
-    if (curText == 0)
-    {
-      outFX = (++outFX) % ARRAY_SIZE(effect);
-      if (outFX == 0)
-      {
-        inFX = (++inFX) % ARRAY_SIZE(effect);
-        if (inFX == 0)
-          P.setInvert(!P.getInvert());
-      }
-      
-      P.setTextEffect(effect[inFX], effect[outFX]);
-
-    }
-
-    // Tell Parola we have a new animation
-    P.displayReset();
-  }
+ 
   
   handle_controller_input();
   tetris.update_game_state();
-  //testDisplay();
-  
+    
 }
-
-
-
-
-
 
 
 
@@ -389,7 +135,7 @@ void initController(){
   nes.begin();
   if(!nes.connect()){
       Serial.print("NES Classic Controller not detected, trying to connect");
-      P.displayText("!cntrl", PA_LEFT, SPEED_TIME, PAUSE_TIME, PA_PRINT);
+      //P.displayText("!cntrl", PA_LEFT, SPEED_TIME, PAUSE_TIME, PA_PRINT);
       for(int i = 0; i < 30; i++) {  
         Serial.print(".");
         delay(1000);
@@ -400,10 +146,13 @@ void initController(){
           }
         }
       } else {
-      P.displayText("+cntrl", PA_LEFT, SPEED_TIME, PAUSE_TIME, PA_PRINT);
+      //P.displayText("+cntrl", PA_LEFT, SPEED_TIME, PAUSE_TIME, PA_PRINT);
       Serial.println("+Controller Connected");
     }
-    P.displayAnimate();
+    //P.displayAnimate();
+  if (nes.isKnockoff()) {  // Uh oh, looks like your controller isn't genuine?
+    nes.setRequestSize(8);  // Requires 8 or more bytes for knockoff controllers
+  }
     delay(1000);
 }
 

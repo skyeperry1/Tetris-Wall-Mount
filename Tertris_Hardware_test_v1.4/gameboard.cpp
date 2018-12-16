@@ -54,6 +54,7 @@ int Gameboard::process_complete_row(int arg_coordinates[4][2]){
   int offset = 0;
   int piece_tile_location_y;
 
+  //Run row erase animation
     for(int x = 0;x < 4; x++ ){       
        piece_tile_location_y = arg_coordinates[x][1]; // Get the y piece tile coordinates       
        if(check_for_complete_row(piece_tile_location_y)){      
@@ -62,7 +63,7 @@ int Gameboard::process_complete_row(int arg_coordinates[4][2]){
     }
   
 
-  
+  //Remove the rows from gamboard  
   for(int x = 0;x < 4; x++ ){  
      
      piece_tile_location_y = arg_coordinates[x][1] - offset; // Get the y piece tile coordinates

@@ -32,13 +32,6 @@ class ColorScheme
   
   private:
 
-  //l_periscope
-  //stick
-  //square
-  //r_periscope
-  //l_dog
-  //r_dog
-  //tee
   CRGB classic[8] = {
                      CRGB(0,0,0), // Blank
                      CRGB(255, 123, 0),  //l_periscope
@@ -50,6 +43,7 @@ class ColorScheme
                      CRGB(195, 0, 255)   //tee
                     };
 
+  
   CRGB warm_xmas[8] = {
                      CRGB(3,3,3), // Blank
                      CRGB(155, 182, 88),  //l_periscope
@@ -59,10 +53,7 @@ class ColorScheme
                      CRGB(31,64,10),  //l_dog
                      CRGB(161,16,11),   //r_dog
                      CRGB(31,64,10)   //tee
-                    };
-
-
-
+                      };
   
 };
 #endif

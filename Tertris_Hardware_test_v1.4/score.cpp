@@ -59,7 +59,7 @@ int Score::get_score(){
 
 
 void Score::reset_level(){
-  Score::level = 0;
+  Score::level = 1;
   if(Score::debug){
     Serial.println("Reseting level to:  " + (String)Score::level);
   }
@@ -83,7 +83,7 @@ void Score::update_level(){
   if(Score::debug){
     Serial.println("update_level() -- updating current level: " + (String)Score::level);
   }
-  Score::level = floor(Score::lines / Score::rows_to_level_up_fixed);
+  Score::level = floor(Score::lines / Score::rows_to_level_up_fixed) + 1;
   return;
 }
 
