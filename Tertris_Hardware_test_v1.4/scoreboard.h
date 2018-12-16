@@ -1,6 +1,6 @@
 /*
-  score.h - Library for flashing Morse code.
-  Created by David A. Mellis, November 2, 2007.
+  Scoreboard.cpp - Library for running Tetris wall mount scoreboard.
+  Created by Skye Perry, Dec 8, 2018.
   Released into the public domain.
 */
 

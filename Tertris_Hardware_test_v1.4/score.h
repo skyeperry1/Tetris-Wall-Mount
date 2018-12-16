@@ -25,6 +25,8 @@ class Score
   int get_lines();
 
   int get_game_speed();
+
+  void new_game();
   
   private:
   bool debug;

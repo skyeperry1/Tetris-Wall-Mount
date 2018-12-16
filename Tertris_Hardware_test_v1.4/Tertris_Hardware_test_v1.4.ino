@@ -1,5 +1,3 @@
-
-
 /*  Coin acceptor Interrupt
  * 
  * 
@@ -21,21 +19,12 @@ static void IRAM_ATTR coinInserted()
 
 }
 
-
-
-
-
-
-
 /* Tetris Game Code
  * 
  * 
  */
 #include "tetris.h"
 Tetris tetris;
-
-
-
 
 /*  NES Controller
  *   
@@ -71,30 +60,19 @@ bool state_Down,
  ********************************************************************************************/
 void setup() {
 
-    tetris.init_hardware();
+tetris.init_hardware();
 
-/*  Controller Setup
- * 
- */
 initController();
   
-
-
  
-/*  Coin acceptor interrupt setup
- * 
- */
-  pinMode(digitalPinToInterrupt(GPIO_Pin), INPUT_PULLDOWN); 
-  
+  /*  Coin acceptor interrupt setup
+   * 
+   */
+  pinMode(digitalPinToInterrupt(GPIO_Pin), INPUT_PULLDOWN);   
   attachInterrupt(GPIO_Pin, &coinInserted, true);
-  //P.displayText("+coin", PA_LEFT, SPEED_TIME, PAUSE_TIME, PA_PRINT);
-  //P.displayAnimate();
   delay(1000);
-
-
   Serial.begin(115200);
 
-  //P.displayText(pc[curText], PA_CENTER, SPEED_TIME, PAUSE_TIME, effect[inFX], effect[outFX]);
   
 }
 
@@ -112,12 +90,9 @@ void loop() {
     //Check if a coin has been Inserted
       {
         coinsChange = 0;//unflag that a coin has been inserted     
+        Serial.println ("coins value: " + (String)coinsValue);
+      }
 
-      
-          // When we have gone back to the first string, set a new exit effect
-          // and when we have done all those set a new entry effect.
-       }
-    //End coin drop
 
 
  
@@ -135,7 +110,6 @@ void initController(){
   nes.begin();
   if(!nes.connect()){
       Serial.print("NES Classic Controller not detected, trying to connect");
-      //P.displayText("!cntrl", PA_LEFT, SPEED_TIME, PAUSE_TIME, PA_PRINT);
       for(int i = 0; i < 30; i++) {  
         Serial.print(".");
         delay(1000);
@@ -146,10 +120,8 @@ void initController(){
           }
         }
       } else {
-      //P.displayText("+cntrl", PA_LEFT, SPEED_TIME, PAUSE_TIME, PA_PRINT);
       Serial.println("+Controller Connected");
     }
-    //P.displayAnimate();
   if (nes.isKnockoff()) {  // Uh oh, looks like your controller isn't genuine?
     nes.setRequestSize(8);  // Requires 8 or more bytes for knockoff controllers
   }
@@ -178,13 +150,15 @@ void handle_controller_input(){
      if (state_Select == 1 && state_Select != lastState_Select) {        
         //Select Button Press
         Serial.println(F("Select Button Pressed"));
-        coinsChange = 1;
-        coinsValue = coinsValue + .25;  
+       // coinsChange = 1;
+       //coinsValue = coinsValue + .25;  
 
       //Start button press      
       } else if(state_Start && state_Start != lastState_Start) {       
         Serial.println(F("Start Button Pressed"));
-
+        if(coinsValue >= .25 && tetris.start_game()){
+          coinsValue = coinsValue - .25;          
+        }
       //D-pad Down press  
       } else if(state_Down && state_Down != lastState_Down) {      
         Serial.println(F("D Pad Down"));

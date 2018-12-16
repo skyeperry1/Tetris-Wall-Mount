@@ -1,6 +1,6 @@
 /*
   color.h - Library for generating colors for andom tetris pieces.
-  Created by Skye Perry, Dec 1, 2018.
+  Created by Skye Perry, Dec 16, 2018.
   Library for used in tetris.cpp to create a random sequence of tetris pieces represented as integers 1 - 7.
   This adheres somewhat the Tetris guidline found here: http://tetris.wikia.com/wiki/Random_Generator
   Released into the public domain.
@@ -50,7 +50,7 @@ void Audio::sfx_pause(){
 }
 
 void Audio::sfx_game_over(){
-  myDFPlayer.play(12);
+  myDFPlayer.play(9);
 }
 
 void Audio::start_music(){

@@ -1,6 +1,6 @@
 /*
-  Tetris.cpp - Library for keeping Tetris score.
-  Created by Skye Perry, November 22, 2018.
+  Scoreboard.cpp - Library for running Tetris wall mount scoreboard.
+  Created by Skye Perry, Dec 8, 2018.
   Released into the public domain.
 */
 #include "Arduino.h"

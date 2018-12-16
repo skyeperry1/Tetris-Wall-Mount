@@ -35,7 +35,10 @@ void Score::set_debug(bool debuglevel){
 }
 
 
-
+void Score::new_game(){
+  reset_score();
+  reset_level();
+}
 
 void Score::reset_score(){
   Score::score = 0;

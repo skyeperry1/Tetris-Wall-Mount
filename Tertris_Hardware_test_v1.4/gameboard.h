@@ -38,6 +38,8 @@ class Gameboard
 
   void debug_print();
   void debug_print_active_state();
+
+   void reset_state();
   
   private:
   
@@ -45,7 +47,7 @@ class Gameboard
   
   void remove_row_from_gameboard(int);
     
-  void reset_state();
+ 
   
   
 };

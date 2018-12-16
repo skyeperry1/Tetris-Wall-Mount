@@ -27,18 +27,25 @@ class Tetris
     Audio audio;
     void update_game_state(); //Runs the game
 
+    void reset_game();
+    bool start_game();
+
     bool move_piece_down();
     void move_piece_left();
     void move_piece_right();
     void move_piece_to_floor();
     void rotate_piece();
-
+    
     void init_hardware();
+
+
     
    private:    
     //Variables
     int lastUpdate;    
-    int game_state;
+    int game_state; // 0 - ready
+                    // 1 - running
+                    // 2 - game over
     
     int player_location_x;
     int player_location_y; 

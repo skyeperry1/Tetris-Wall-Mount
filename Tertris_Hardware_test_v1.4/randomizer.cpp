@@ -17,7 +17,7 @@
  */
 
 Randomizer::Randomizer(){
-    Serial.begin(115200);
+    //Serial.begin(115200);
     Randomizer::current_sequence_index = 0;
     Randomizer::active_sequence = 1;
     Randomizer::inactive_sequence = 0;

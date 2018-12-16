@@ -16,8 +16,7 @@ void Tetris::init_hardware(){
   audio.initialize();
   gameboard.initialize();
   scoreboard.initialize();  
-
-  audio.start_music(); // need to mode this
+  
 }
 
 
@@ -26,12 +25,34 @@ Tetris::Tetris()
 {
   Serial.begin(115200);
   Serial.println("Starting Tetris...");
-  score.set_debug(true);
-  
-  create_new_piece();
-  
+  game_state = 0;
+  score.set_debug(true);  
+  Tetris::reset_game();
   lastUpdate = millis();
  
+}
+
+
+
+void Tetris::reset_game(){
+  gameboard.reset_state();
+  score.new_game();
+  scoreboard.print_score(score.get_score(),score.get_level());
+  Randomizer randomizer; 
+  
+}
+
+
+
+bool Tetris::start_game(){
+  if(game_state == 1){return false;} // can't start if we're already playing 
+  Serial.println("Starting Tetris...");
+  reset_game();
+  audio.start_music(); // need to move this perhaps?
+  create_new_piece();  
+  lastUpdate = millis();  
+  game_state = 1;
+  return true;
 }
 
 
@@ -42,17 +63,21 @@ Tetris::Tetris()
  * 
  */
 void Tetris::update_game_state(){
-  int currentTime = millis();
+  
+  if(game_state == 1){
+    int currentTime = millis();  
+    if(currentTime - lastUpdate > score.get_game_speed()){
+      move_piece_down();
+      //tetromino.debug_print();
+      //gameboard.debug_print_active_state();
+      lastUpdate = currentTime;
+      audio.update_state();
+    } 
+  }
 
-  if(currentTime - lastUpdate > score.get_game_speed()){
-    move_piece_down();
-    //tetromino.debug_print();
-    //gameboard.debug_print_active_state();
-    lastUpdate = currentTime;
-    audio.update_state();
-  }  
   gameboard.render_display();
   scoreboard.update_state();
+  
 }
 
 
@@ -249,7 +274,13 @@ void Tetris::set_active_piece_coordiantes(){
  */
  
 void Tetris::create_new_piece(){
-  if(gameboard.check_for_top_out()){ Serial.println("**GAME OVER**");delay(10000);return;}
+  if(gameboard.check_for_top_out()){ 
+      Serial.println("**GAME OVER**");
+      audio.sfx_game_over();
+      game_state = 2;
+      delay(3000);    
+      return;
+    }
   
   reset_player_location();
   tetromino.init_new_tetromino();  
