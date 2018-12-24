@@ -4,7 +4,7 @@
  */
 uint8_t GPIO_Pin = 15;
 //Attach coinInt to Interrupt Pin 17.
-volatile double coinsValue = 0.00; // Has to be a double for the esp for some reason, initialize to 0
+volatile double coinsValue = 1.00; // Has to be a double for the esp for some reason, initialize to 0
 //Volatile as this variable changes any time the Interrupt is triggered
 volatile int coinsChange = 0;     
 

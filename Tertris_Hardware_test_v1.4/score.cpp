@@ -37,7 +37,9 @@ void Score::set_debug(bool debuglevel){
 
 void Score::new_game(){
   reset_score();
+  reset_lines();
   reset_level();
+  set_game_speed();
 }
 
 void Score::reset_score(){
@@ -63,9 +65,9 @@ int Score::get_score(){
 
 void Score::reset_level(){
   Score::level = 1;
-  if(Score::debug){
+  //if(Score::debug){
     Serial.println("Reseting level to:  " + (String)Score::level);
-  }
+  //}
   return;
 }
 
@@ -94,9 +96,9 @@ void Score::update_level(){
 
 void Score::reset_lines(){
   Score::lines = 0;
-  if(Score::debug){
+  //if(Score::debug){
     Serial.println("Reseting lines to:  " + (String)Score::lines);
-  }
+  //}
   return;
 }
 
