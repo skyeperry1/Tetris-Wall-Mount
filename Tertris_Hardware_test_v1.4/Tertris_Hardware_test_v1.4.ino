@@ -11,13 +11,15 @@ volatile int coinsChange = 0;
 static void IRAM_ATTR coinInserted()    
 //The function that is called every time it recieves a pulse
 {
-  coinsValue = coinsValue + 0.25;  
+ 
 //As we set the Pulse to represent 5p or 5c we add this to the coinsValue
   coinsChange = 1;                           
 //Flag that there has been a coin inserted
 //Serial.print("interrupt Fired");
 
 }
+
+int lastctrlupdate = 0;
 
 /* Tetris Game Code
  * 
@@ -76,7 +78,7 @@ initController();
   
 }
 
-
+  
 
 /*******************************************************************************************
  *  LOOP()
@@ -88,16 +90,21 @@ void loop() {
    */
     if(coinsChange == 1)          
     //Check if a coin has been Inserted
-      {
-        coinsChange = 0;//unflag that a coin has been inserted     
-        Serial.println ("coins value: " + (String)coinsValue);
+      { 
+        if( millis() - lastctrlupdate > 250){ // debounce the coin acceptor
+          lastctrlupdate = millis();
+          coinsValue = coinsValue + 0.25;              
+          Serial.println ("coins value: " + (String)coinsValue);
+        }
+        coinsChange = 0;//unflag that a coin has been inserted 
       }
 
 
 
  
-  
+
   handle_controller_input();
+
   tetris.update_game_state();
     
 }
@@ -135,7 +142,10 @@ void handle_controller_input(){
     if (!success) {  // Ruh roh
       Serial.println("Controller disconnected!");
       nes.begin();
-      nes.connect();      
+      nes.connect(); 
+      if (nes.isKnockoff()) {  // Uh oh, looks like your controller isn't genuine?
+        nes.setRequestSize(8);  // Requires 8 or more bytes for knockoff controllers
+      }     
     }  else {
      //Update all button states
      state_Down = nes.dpadDown();
@@ -149,9 +159,7 @@ void handle_controller_input(){
 
      if (state_Select == 1 && state_Select != lastState_Select) {        
         //Select Button Press
-        Serial.println(F("Select Button Pressed"));
-       // coinsChange = 1;
-       //coinsValue = coinsValue + .25;  
+        Serial.println(F("Select Button Pressed")); 
 
       //Start button press      
       } else if(state_Start && state_Start != lastState_Start) {       

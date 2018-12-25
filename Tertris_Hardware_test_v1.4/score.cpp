@@ -19,7 +19,6 @@ Score::Score(bool debug = 0){
     Serial.begin(115200);
     Serial.println("Starting Tetris Score Enginge -- Current score is: " + (String)Score::score);
   //}
-  
 }
 
 
