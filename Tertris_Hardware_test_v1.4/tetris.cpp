@@ -37,7 +37,7 @@ Tetris::Tetris()
 void Tetris::reset_game(){
   gameboard.reset_state();
   score.new_game();
-  scoreboard.print_score(score.get_score(),score.get_level());
+  scoreboard.print_score(score.get_score(),score.get_level(),score.get_lines());
   Randomizer randomizer; 
   
 }
@@ -154,7 +154,7 @@ bool Tetris::move_piece_down(){
 
     int completed_rows = gameboard.process_complete_row(active_piece_tile_coordinates);
     score.update_score(completed_rows);
-    scoreboard.print_score(score.get_score(),score.get_level());
+    scoreboard.print_score(score.get_score(),score.get_level(),score.get_lines());
     create_new_piece();
     //gameboard.render_tetromino(active_piece_tile_coordinates,tetromino.color_id);
     
@@ -243,7 +243,7 @@ void Tetris::move_piece_to_floor(){
     gameboard.render_display();
     int completed_rows = gameboard.process_complete_row(active_piece_tile_coordinates);
     score.update_score(completed_rows);
-    scoreboard.print_score(score.get_score(),score.get_level());
+    scoreboard.print_score(score.get_score(),score.get_level(),score.get_lines());
     create_new_piece();
     
     return;  

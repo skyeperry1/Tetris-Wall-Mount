@@ -94,6 +94,22 @@ void Scoreboard::initialize(){
   P.displayText("+scrbrd", PA_CENTER, SPEED_TIME, PAUSE_TIME, PA_PRINT);
   P.displayAnimate();
   delay(1000);
+
+
+
+  ld.setBright(20);
+  /* Set the digit count */
+  ld.setDigitLimit(8);  
+    for (int i = 0; i <= 8; i++) {
+    /* Select Digit 5 and write B01100011 */
+    ld.write(i, B01100011);
+    delay(100);
+
+    /* Select Digit 5 and write B00011101 */
+    ld.write(i, B00011101);
+    delay(100);
+  }  
+  ld.clear();
   
 }
 
@@ -152,7 +168,7 @@ String Scoreboard::doubleToString(double input,int decimalPlaces){
 }
 
 
-void Scoreboard::print_score(int score, int level){  
+void Scoreboard::print_score(int score, int level,int rows){  
   String score_string = (String)score;//doubleToString(score,0);
   score_string = format_int_string(score_string);
   char str2[BUF_SIZE] = {""};
@@ -168,6 +184,8 @@ void Scoreboard::print_score(int score, int level){
   active_state[3] = (char *)malloc(strlen(str3)+1);
   strcpy(active_state[3],str3);
   //curText = 1;
+
+  update_segment_display(rows,level);
 }
 
 String Scoreboard::format_int_string(String arg_string){
@@ -194,6 +212,16 @@ void Scoreboard::print_message(String message){
   active_state[1] = (char *)malloc(strlen(str2)+1);
   strcpy(active_state[1],str2);
   //curText = 0;
+}
+
+
+
+void Scoreboard::update_segment_display(int rows, int level){
+    
+  int first_segment_offset = 8 - (int)String(rows).length();
+  ld.clear();
+  ld.printDigit( rows, first_segment_offset);
+  ld.printDigit( level,0);
 }
 
 

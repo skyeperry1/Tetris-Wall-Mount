@@ -61,6 +61,7 @@ bool state_Down,
  *  SETUP()
  ********************************************************************************************/
 void setup() {
+delay(2000); // if we're the first to get power, wait a sec for everything else to catch up
 
 tetris.init_hardware();
 

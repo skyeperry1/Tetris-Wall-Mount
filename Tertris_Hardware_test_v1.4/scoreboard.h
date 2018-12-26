@@ -10,6 +10,7 @@
 
 #include "Arduino.h"
 
+#include "DigitLedDisplay.h"
 
 #include <MD_Parola.h>
 #include <MD_MAX72xx.h>
@@ -27,9 +28,12 @@ class Scoreboard
   public:  
   Scoreboard();
   MD_Parola P = MD_Parola(HARDWARE_TYPE, CS_PIN, MAX_DEVICES);
+
+  DigitLedDisplay ld = DigitLedDisplay(12, 14, 13);
+  
   void update_state();
 
-  void print_score(int,int);
+  void print_score(int,int,int);
   void print_message(String);
   
   
@@ -37,6 +41,7 @@ class Scoreboard
   void debug_print();
   
   private:
+  void update_segment_display(int , int);
   int state;
   String format_int_string(String);
   String doubleToString(double input,int decimalPlaces);
