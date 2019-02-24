@@ -110,7 +110,7 @@ void Audio::initialize(){
 
   
   myDFPlayer.setTimeOut(500); //Set serial communictaion time out 500ms  
-  myDFPlayer.volume(15);  //Set volume value (0~30).
+  myDFPlayer.volume(13);  //Set volume value (0~30).
   myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD); // Set SD read
   myDFPlayer.EQ(DFPLAYER_EQ_ROCK);
   sfx_boot();

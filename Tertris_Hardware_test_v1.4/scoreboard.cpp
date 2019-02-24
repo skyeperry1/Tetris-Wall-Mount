@@ -29,10 +29,8 @@ uint8_t  curText;
 
 char  *active_state[BUF_SIZE] =
 {
-  "Score",
-  "0",
-  "Level",
-  "0"
+  "Score"
+  //,"0"
 };
 
 
@@ -47,10 +45,10 @@ char  *default_state[BUF_SIZE] =
 
 char  *ready_state[BUF_SIZE] =
 {
-  "Game",
-  "Over",
-  "Insert",
-  "Coin"
+  "Press",
+  "Start",
+  "Credits:",
+  "1"
 };
 
 uint8_t  inFX, outFX;
@@ -83,7 +81,7 @@ textEffect_t  effect[] =
 };
 
 Scoreboard::Scoreboard(){
-  state = 0;
+  state = 2;
 }
 
 void Scoreboard::initialize(){
@@ -97,7 +95,7 @@ void Scoreboard::initialize(){
 
 
 
-  ld.setBright(20);
+  ld.setBright(15);
   /* Set the digit count */
   ld.setDigitLimit(8);  
     for (int i = 0; i <= 8; i++) {
@@ -119,23 +117,37 @@ void Scoreboard::update_state(){
   {
     // Set the display for the next string.
     //curText = ++curText;
-    curText >= 3? curText = 0: curText = curText + 1;
-    P.setTextBuffer(active_state[curText]);
+    //curText >= 3? curText = 0: curText = curText + 1;
+    if(state == 1){
+      curText >= 0? curText = 0: curText = curText + 1;
+      P.setTextBuffer(active_state[curText]);
+    } else if (state == 2){
+          curText >= 3? curText = 0: curText = curText + 1;
+      P.setTextBuffer(default_state[curText]);
+    }else if (state == 3){
+      curText >= 3? curText = 0: curText = curText + 1;
+      P.setTextBuffer(ready_state[curText]);
+    }
 
     // When we have gone back to the first string, set a new exit effect
     // and when we have done all those set a new entry effect.
+   if(state != 1){
     if (curText == 0)
-    {
-      outFX = (++outFX) % ARRAY_SIZE(effect);
-      if (outFX == 0)
       {
-        inFX = (++inFX) % ARRAY_SIZE(effect);
-        if (inFX == 0)
-          P.setInvert(!P.getInvert());
+        outFX = (++outFX) % ARRAY_SIZE(effect);
+        if (outFX == 0)
+        {
+          inFX = (++inFX) % ARRAY_SIZE(effect);
+          if (inFX == 0)
+            P.setInvert(!P.getInvert());
+        }
+        
+        P.setTextEffect(effect[inFX], PA_SCROLL_LEFT);//effect[outFX]);
+  
       }
-      
-      P.setTextEffect(effect[inFX], PA_SCROLL_LEFT);//effect[outFX]);
-
+    } else {
+      //P.displayText( PA_CENTER, SPEED_TIME, 60000, PA_BLINDS);
+      P.setTextEffect(effect[inFX], PA_SCROLL_LEFT);
     }
 
     // Tell Parola we have a new animation
@@ -175,18 +187,39 @@ void Scoreboard::print_score(int score, int level,int rows){
   score_string.toCharArray(str2, BUF_SIZE);
   format_int_string(score_string);
            
-  active_state[1] = (char *)malloc(strlen(str2)+1);
-  strcpy(active_state[1],str2);
-
-  String level_string = (String)level;//doubleToString(score,0);
+  active_state[0] = (char *)malloc(strlen(str2)+1);
+  strcpy(active_state[0],str2);
+   P.setTextEffect(effect[inFX], PA_SCROLL_LEFT);
+  /*String level_string = (String)level;//doubleToString(score,0);
   char str3[BUF_SIZE] = {""};
   level_string.toCharArray(str3, BUF_SIZE);         
   active_state[3] = (char *)malloc(strlen(str3)+1);
   strcpy(active_state[3],str3);
   //curText = 1;
-
+  */
   update_segment_display(rows,level);
 }
+
+void Scoreboard::print_credits(int credits){  
+  String score_string = (String)credits;//doubleToString(score,0);
+  //score_string = format_int_string(score_string);
+  char str2[BUF_SIZE] = {""};
+  score_string.toCharArray(str2, BUF_SIZE);
+  format_int_string(score_string);
+           
+  ready_state[3] = (char *)malloc(strlen(str2)+1);
+  strcpy(ready_state[3],str2);
+
+  /*String level_string = (String)level;//doubleToString(score,0);
+  char str3[BUF_SIZE] = {""};
+  level_string.toCharArray(str3, BUF_SIZE);         
+  active_state[3] = (char *)malloc(strlen(str3)+1);
+  strcpy(active_state[3],str3);
+  //curText = 1;
+  */
+
+}
+
 
 String Scoreboard::format_int_string(String arg_string){
 

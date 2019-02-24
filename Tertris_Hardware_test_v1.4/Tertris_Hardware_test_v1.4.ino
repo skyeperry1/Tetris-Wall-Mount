@@ -19,7 +19,7 @@ static void IRAM_ATTR coinInserted()
 
 }
 
-int lastctrlupdate = 0;
+int last_coin_insert = 0;
 
 /* Tetris Game Code
  * 
@@ -64,7 +64,7 @@ void setup() {
 delay(2000); // if we're the first to get power, wait a sec for everything else to catch up
 
 tetris.init_hardware();
-
+tetris.game_credits = 4;
 initController();
   
  
@@ -92,9 +92,10 @@ void loop() {
     if(coinsChange == 1)          
     //Check if a coin has been Inserted
       { 
-        if( millis() - lastctrlupdate > 250){ // debounce the coin acceptor
-          lastctrlupdate = millis();
-          coinsValue = coinsValue + 0.25;              
+        if( millis() - last_coin_insert > 250){ // debounce the coin acceptor
+          last_coin_insert = millis();
+          coinsValue = coinsValue + 0.25;
+          ++tetris.game_credits;              
           Serial.println ("coins value: " + (String)coinsValue);
         }
         coinsChange = 0;//unflag that a coin has been inserted 
@@ -165,8 +166,10 @@ void handle_controller_input(){
       //Start button press      
       } else if(state_Start && state_Start != lastState_Start) {       
         Serial.println(F("Start Button Pressed"));
-        if(coinsValue >= .25 && tetris.start_game()){
-          coinsValue = coinsValue - .25;          
+        //if(coinsValue >= .25 && tetris.start_game()){'
+        if(tetris.game_credits > 0 && tetris.start_game()){
+          coinsValue = coinsValue - .25;
+          --tetris.game_credits;          
         }
       //D-pad Down press  
       } else if(state_Down && state_Down != lastState_Down) {      

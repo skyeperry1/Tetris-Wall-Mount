@@ -29,20 +29,21 @@ class Scoreboard
   Scoreboard();
   MD_Parola P = MD_Parola(HARDWARE_TYPE, CS_PIN, MAX_DEVICES);
 
-  DigitLedDisplay ld = DigitLedDisplay(12, 14, 13);
+  DigitLedDisplay ld = DigitLedDisplay(12,  13,14);
   
   void update_state();
 
   void print_score(int,int,int);
   void print_message(String);
   
-  
+  int state;
+  void print_credits(int);
   void initialize();
   void debug_print();
   
   private:
   void update_segment_display(int , int);
-  int state;
+  
   String format_int_string(String);
   String doubleToString(double input,int decimalPlaces);
 };

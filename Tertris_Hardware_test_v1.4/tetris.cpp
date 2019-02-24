@@ -9,7 +9,7 @@
 Score score(true);
 Randomizer randomizer;
 
-
+int game_credits = 0;
 
 //Should be called in setup step of program
 void Tetris::init_hardware(){
@@ -22,7 +22,7 @@ void Tetris::init_hardware(){
 
 
 Tetris::Tetris()
-{
+{ 
   Serial.begin(115200);
   Serial.println("Starting Tetris...");
   game_state = 0;
@@ -47,6 +47,7 @@ void Tetris::reset_game(){
 bool Tetris::start_game(){
   if(game_state == 1){return false;} // can't start if we're already playing 
   Serial.println("Starting Tetris...");
+  scoreboard.state = 1;
   reset_game();
   audio.start_music(); // need to move this perhaps?
   create_new_piece();  
@@ -75,6 +76,17 @@ void Tetris::update_game_state(){
     } 
   }
 
+  
+  if(game_state == 0){
+      if(game_credits == 0){
+        scoreboard.state = 2;
+      } else {
+          scoreboard.print_credits(game_credits);
+          scoreboard.state = 3;
+      }    
+  }
+
+  
   gameboard.render_display();
   scoreboard.update_state();
   
@@ -153,8 +165,10 @@ bool Tetris::move_piece_down(){
     gameboard.render_tetromino(active_piece_tile_coordinates,tetromino.color_id);
 
     int completed_rows = gameboard.process_complete_row(active_piece_tile_coordinates);
-    score.update_score(completed_rows);
-    scoreboard.print_score(score.get_score(),score.get_level(),score.get_lines());
+    if(completed_rows > 0){
+      score.update_score(completed_rows);
+      scoreboard.print_score(score.get_score(),score.get_level(),score.get_lines());
+    }
     create_new_piece();
     //gameboard.render_tetromino(active_piece_tile_coordinates,tetromino.color_id);
     
@@ -242,8 +256,10 @@ void Tetris::move_piece_to_floor(){
     gameboard.render_tetromino(active_piece_tile_coordinates,tetromino.color_id);
     gameboard.render_display();
     int completed_rows = gameboard.process_complete_row(active_piece_tile_coordinates);
-    score.update_score(completed_rows);
-    scoreboard.print_score(score.get_score(),score.get_level(),score.get_lines());
+    if(completed_rows > 0){
+      score.update_score(completed_rows);
+      scoreboard.print_score(score.get_score(),score.get_level(),score.get_lines());
+    }
     create_new_piece();
     
     return;  
@@ -276,6 +292,13 @@ void Tetris::set_active_piece_coordiantes(){
 void Tetris::create_new_piece(){
   if(gameboard.check_for_top_out()){ 
       Serial.println("**GAME OVER**");
+      if(game_credits == 0){
+        scoreboard.state = 2;
+      } else {
+          scoreboard.print_credits(game_credits);
+          scoreboard.state = 3;
+      }
+      
       audio.sfx_game_over();
       game_state = 2;
       delay(3000);    

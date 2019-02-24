@@ -38,6 +38,7 @@ class Tetris
     
     void init_hardware();
 
+     int game_credits;
 
     
    private:    
